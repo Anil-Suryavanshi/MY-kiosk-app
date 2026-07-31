@@ -1,6 +1,7 @@
 #include <windows.h>
 #include <shellapi.h>
 #include <bcrypt.h>
+#include <winhttp.h>
 #include <wrl.h>
 #include "WebView2.h"
 #include "resource.h"
@@ -12,6 +13,7 @@
 
 #pragma comment(lib, "bcrypt.lib")
 #pragma comment(lib, "urlmon.lib")
+#pragma comment(lib, "winhttp.lib")
 using Microsoft::WRL::Callback;
 
 constexpr UINT WM_VIOLATION = WM_APP + 1;
@@ -19,7 +21,7 @@ constexpr UINT WM_ADMIN_UNLOCK = WM_APP + 2;
 constexpr UINT WM_ADMIN_EXIT = WM_APP + 3;
 
 struct Config {
-    std::wstring startUrl;
+    std::wstring launchConfigUrl;
     std::vector<std::wstring> allowedHosts;
     std::wstring passwordHash;
 };
@@ -28,9 +30,11 @@ class ExamApp {
 public:
     HWND window{};
     HWND freezeOverlay{};
+    HWND loadingOverlay{};
     ICoreWebView2Controller* controller{};
     ICoreWebView2* webview{};
     Config config;
+    std::wstring sessionAllowedHost;
     int violations{};
     bool frozen{};
     bool unlockDialogOpen{};
@@ -52,7 +56,18 @@ public:
                                 controller->get_CoreWebView2(&webview);
                                 ConfigureWebView();
                                 ResizeBrowser();
-                                webview->Navigate(config.startUrl.c_str());
+                                const auto targetUrl = FetchExamUrl();
+                                if (targetUrl.empty()) {
+                                    MessageBox(window, L"Could not retrieve the exam URL. Check the network and configuration.", L"Secure Exam Browser", MB_ICONERROR);
+                                    return E_FAIL;
+                                }
+                                SetSessionAllowedHost(targetUrl);
+                                if (sessionAllowedHost.empty()) {
+                                    MessageBox(window, L"The exam URL service returned an invalid URL.", L"Secure Exam Browser", MB_ICONERROR);
+                                    return E_FAIL;
+                                }
+                                webview->Navigate(targetUrl.c_str());
+                                ShowWindow(loadingOverlay, SW_HIDE);
                                 return S_OK;
                             }).Get());
                 }).Get());
@@ -63,6 +78,7 @@ public:
         RECT rect{}; GetClientRect(window, &rect);
         controller->put_Bounds(rect);
         if (freezeOverlay) MoveWindow(freezeOverlay, 0, 0, rect.right, rect.bottom, TRUE);
+        if (loadingOverlay) MoveWindow(loadingOverlay, 0, 0, rect.right, rect.bottom, TRUE);
     }
 
     void ReportViolation(const wchar_t* reason) {
@@ -117,6 +133,8 @@ public:
         std::wstring currentHost = host ? host : L"";
         SysFreeString(scheme); SysFreeString(host);
         if (_wcsicmp(currentScheme.c_str(), L"https") != 0 && _wcsicmp(currentScheme.c_str(), L"http") != 0) return false;
+        if (!sessionAllowedHost.empty() && (_wcsicmp(currentHost.c_str(), sessionAllowedHost.c_str()) == 0 ||
+            (currentHost.size() > sessionAllowedHost.size() + 1 && _wcsicmp(currentHost.c_str() + currentHost.size() - sessionAllowedHost.size() - 1, (L"." + sessionAllowedHost).c_str()) == 0))) return true;
         for (const auto& allowed : config.allowedHosts) {
             if (_wcsicmp(currentHost.c_str(), allowed.c_str()) == 0) return true;
             const auto suffix = L"." + allowed;
@@ -156,11 +174,56 @@ public:
     }
 
 private:
+    void SetSessionAllowedHost(const std::wstring& url) {
+        Microsoft::WRL::ComPtr<IUri> parsed;
+        if (FAILED(CreateUri(url.c_str(), Uri_CREATE_ALLOW_RELATIVE, 0, &parsed))) return;
+        BSTR scheme{}; BSTR host{};
+        parsed->GetSchemeName(&scheme); parsed->GetHost(&host);
+        const bool secure = scheme && (_wcsicmp(scheme, L"https") == 0 || _wcsicmp(scheme, L"http") == 0);
+        if (secure && host) sessionAllowedHost = host;
+        SysFreeString(scheme); SysFreeString(host);
+    }
+
+    std::wstring FetchExamUrl() const {
+        URL_COMPONENTS parts{ sizeof(parts) };
+        wchar_t host[256]{}, path[4096]{};
+        parts.lpszHostName = host; parts.dwHostNameLength = _countof(host);
+        parts.lpszUrlPath = path; parts.dwUrlPathLength = _countof(path);
+        if (!WinHttpCrackUrl(config.launchConfigUrl.c_str(), 0, 0, &parts)) return L"";
+
+        HINTERNET session = WinHttpOpen(L"SecureExamBrowser/1.0", WINHTTP_ACCESS_TYPE_DEFAULT_PROXY, WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0);
+        HINTERNET connection = session ? WinHttpConnect(session, host, parts.nPort, 0) : nullptr;
+        HINTERNET request = connection ? WinHttpOpenRequest(connection, L"GET", path, nullptr, WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES, parts.nScheme == INTERNET_SCHEME_HTTPS ? WINHTTP_FLAG_SECURE : 0) : nullptr;
+        std::wstring response;
+        if (request && WinHttpSendRequest(request, WINHTTP_NO_ADDITIONAL_HEADERS, 0, WINHTTP_NO_REQUEST_DATA, 0, 0, 0) && WinHttpReceiveResponse(request, nullptr)) {
+            DWORD size{};
+            while (WinHttpQueryDataAvailable(request, &size) && size) {
+                std::string bytes(size, '\0'); DWORD read{};
+                if (!WinHttpReadData(request, bytes.data(), size, &read) || !read) break;
+                const int length = MultiByteToWideChar(CP_UTF8, 0, bytes.data(), static_cast<int>(read), nullptr, 0);
+                std::wstring chunk(length, L'\0'); MultiByteToWideChar(CP_UTF8, 0, bytes.data(), static_cast<int>(read), chunk.data(), length);
+                response += chunk;
+            }
+        }
+        if (request) WinHttpCloseHandle(request); if (connection) WinHttpCloseHandle(connection); if (session) WinHttpCloseHandle(session);
+        const auto successKey = response.find(L"\"success\"");
+        const auto successColon = successKey == std::wstring::npos ? std::wstring::npos : response.find(L':', successKey);
+        const auto successValue = successColon == std::wstring::npos ? std::wstring::npos : response.find_first_not_of(L" \t\r\n", successColon + 1);
+        if (successValue == std::wstring::npos || response.compare(successValue, 4, L"true") != 0) return L"";
+        const auto key = response.find(L"\"url\"");
+        if (key == std::wstring::npos) return L"";
+        const auto colon = response.find(L':', key), firstQuote = response.find(L'\"', colon);
+        if (colon == std::wstring::npos || firstQuote == std::wstring::npos) return L"";
+        const auto lastQuote = response.find(L'\"', firstQuote + 1);
+        if (lastQuote == std::wstring::npos) return L"";
+        return response.substr(firstQuote + 1, lastQuote - firstQuote - 1);
+    }
+
     Config LoadConfig() {
         wchar_t location[MAX_PATH]{}; GetModuleFileName(nullptr, location, MAX_PATH);
         std::wstring path(location); path = path.substr(0, path.find_last_of(L"\\/")) + L"\\exam-config.ini";
         wchar_t value[4096]{};
-        GetPrivateProfileString(L"Exam", L"StartUrl", L"https://your-exam-portal.example/start", value, 4096, path.c_str()); Config result{ value, {}, L"" };
+        GetPrivateProfileString(L"Exam", L"LaunchConfigUrl", L"https://your-exam-portal.example/start", value, 4096, path.c_str()); Config result{ value, {}, L"" };
         GetPrivateProfileString(L"Exam", L"AllowedHosts", L"your-exam-portal.example", value, 4096, path.c_str()); std::wstringstream hosts(value); std::wstring host;
         while (std::getline(hosts, host, L',')) { host.erase(0, host.find_first_not_of(L" \t")); host.erase(host.find_last_not_of(L" \t") + 1); if (!host.empty()) result.allowedHosts.push_back(host); }
         GetPrivateProfileString(L"Exam", L"AdminPasswordSha256", L"", value, 4096, path.c_str()); result.passwordHash = value;
@@ -199,14 +262,19 @@ LRESULT CALLBACK KeyboardHook(int code, WPARAM keyMessage, LPARAM data) {
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
     switch (message) {
-    case WM_CREATE: gApp->freezeOverlay = CreateWindowEx(WS_EX_TOPMOST, L"STATIC", L"EXAM PAUSED\n\n3 security warnings detected.\nCall the invigilator.\n\nInvigilator: press Ctrl+Shift+F10 to unlock.", WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 0, 0, 0, 0, hwnd, nullptr, GetModuleHandle(nullptr), nullptr); SendMessage(gApp->freezeOverlay, WM_SETFONT, reinterpret_cast<WPARAM>(GetStockObject(DEFAULT_GUI_FONT)), TRUE); return 0;
+    case WM_CREATE:
+        gApp->loadingOverlay = CreateWindowEx(WS_EX_TOPMOST, L"STATIC", L"Secure Exam Browser\n\nLoading secure exam session...", WS_CHILD | WS_VISIBLE | SS_CENTER | SS_CENTERIMAGE, 0, 0, 0, 0, hwnd, nullptr, GetModuleHandle(nullptr), nullptr);
+        gApp->freezeOverlay = CreateWindowEx(WS_EX_TOPMOST, L"STATIC", L"EXAM PAUSED\n\n3 security warnings detected.\nCall the invigilator.\n\nInvigilator: press Ctrl+Shift+F10 to unlock.", WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 0, 0, 0, 0, hwnd, nullptr, GetModuleHandle(nullptr), nullptr);
+        SendMessage(gApp->loadingOverlay, WM_SETFONT, reinterpret_cast<WPARAM>(GetStockObject(DEFAULT_GUI_FONT)), TRUE);
+        SendMessage(gApp->freezeOverlay, WM_SETFONT, reinterpret_cast<WPARAM>(GetStockObject(DEFAULT_GUI_FONT)), TRUE);
+        return 0;
     case WM_SIZE: gApp->ResizeBrowser(); return 0;
     case WM_ACTIVATE: if (LOWORD(wParam) == WA_INACTIVE && !gApp->frozen && !gApp->unlockDialogOpen && !gApp->warningDialogOpen) PostMessage(hwnd, WM_VIOLATION, 0, 0); return 0;
     case WM_VIOLATION: gApp->ReportViolation(L"Restricted shortcut or attempt to leave the exam window detected."); return 0;
     case WM_ADMIN_UNLOCK: gApp->RequestUnlock(); return 0;
     case WM_ADMIN_EXIT: gApp->RequestAdminExit(); return 0;
     case WM_CTLCOLORSTATIC:
-        if (reinterpret_cast<HWND>(lParam) == gApp->freezeOverlay) {
+        if (reinterpret_cast<HWND>(lParam) == gApp->freezeOverlay || reinterpret_cast<HWND>(lParam) == gApp->loadingOverlay) {
             SetTextColor(reinterpret_cast<HDC>(wParam), RGB(255, 255, 255));
             SetBkColor(reinterpret_cast<HDC>(wParam), RGB(0, 0, 0));
             return reinterpret_cast<LRESULT>(GetStockObject(BLACK_BRUSH));

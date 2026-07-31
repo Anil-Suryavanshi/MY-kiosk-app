@@ -1,5 +1,5 @@
 {
-  "StartUrl": "https://your-exam-portal.example/start",
-  "AllowedHosts": ["your-exam-portal.example"],
+  "LaunchConfigUrl": "https://script.google.com/macros/s/AKfycbyK6IOs7wsKOY8wRtMmD41kBipnMnCChyvzx3KTlbfA5diXBMzMYw1QS7Q03D2BH5uf_A/exec",
+  "AllowedHosts": ["instagram.com"],
   "ExitPasswordHash": "REPLACE_WITH_SHA256_UPPERCASE_HEX"
 }

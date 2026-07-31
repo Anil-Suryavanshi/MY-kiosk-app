@@ -2,6 +2,8 @@ using Microsoft.Web.WebView2.Core;
 using System.ComponentModel;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
+using System.Net.Http.Json;
 using System.Windows.Input;
 
 namespace SecureExamBrowser;
@@ -11,6 +13,7 @@ public partial class MainWindow : Window
     private readonly ExamConfiguration _configuration;
     private bool _authorisedExit;
     private bool _browserReady;
+    private string? _sessionAllowedHost;
 
     public MainWindow()
     {
@@ -25,7 +28,9 @@ public partial class MainWindow : Window
         {
             await Browser.EnsureCoreWebView2Async();
             ConfigureBrowser(Browser.CoreWebView2);
-            Browser.CoreWebView2.Navigate(_configuration.StartUrl);
+            StatusText.Text = "Getting exam URL…";
+            var targetUrl = await GetExamUrlAsync();
+            Browser.CoreWebView2.Navigate(targetUrl);
             _browserReady = true;
             LoadingOverlay.Visibility = Visibility.Collapsed;
         }
@@ -49,10 +54,24 @@ public partial class MainWindow : Window
         };
     }
 
+    private async Task<string> GetExamUrlAsync()
+    {
+        using var client = new HttpClient();
+        var response = await client.GetFromJsonAsync<LaunchResponse>(_configuration.LaunchConfigUrl);
+        if (response is not { Success: true } || string.IsNullOrWhiteSpace(response.Url))
+            throw new InvalidOperationException("The exam URL service returned an invalid response.");
+        if (!Uri.TryCreate(response.Url, UriKind.Absolute, out var uri) || uri.Scheme is not ("https" or "http"))
+            throw new InvalidOperationException("The exam URL service returned an invalid URL.");
+        _sessionAllowedHost = uri.Host;
+        return response.Url;
+    }
+
     private bool IsAllowedUri(string candidate)
     {
         if (!Uri.TryCreate(candidate, UriKind.Absolute, out var uri)) return false;
         if (uri.Scheme is not ("https" or "http")) return false;
+        if (!string.IsNullOrEmpty(_sessionAllowedHost) && (uri.Host.Equals(_sessionAllowedHost, StringComparison.OrdinalIgnoreCase) ||
+            uri.Host.EndsWith($".{_sessionAllowedHost}", StringComparison.OrdinalIgnoreCase))) return true;
         return _configuration.AllowedHosts.Count == 0 || _configuration.AllowedHosts.Any(host =>
             uri.Host.Equals(host, StringComparison.OrdinalIgnoreCase) ||
             uri.Host.EndsWith($".{host}", StringComparison.OrdinalIgnoreCase));
@@ -104,7 +123,7 @@ public partial class MainWindow : Window
 
 internal sealed class ExamConfiguration
 {
-    public string StartUrl { get; init; } = "https://example.org";
+    public string LaunchConfigUrl { get; init; } = "https://example.org";
     public List<string> AllowedHosts { get; init; } = [];
     public string ExitPasswordHash { get; init; } = "";
 
@@ -114,4 +133,10 @@ internal sealed class ExamConfiguration
         if (!File.Exists(path)) return new ExamConfiguration();
         return System.Text.Json.JsonSerializer.Deserialize<ExamConfiguration>(File.ReadAllText(path)) ?? new ExamConfiguration();
     }
+}
+
+internal sealed class LaunchResponse
+{
+    public bool Success { get; init; }
+    public string Url { get; init; } = "";
 }
