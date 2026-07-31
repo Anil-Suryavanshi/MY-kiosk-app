@@ -1,0 +1,146 @@
+0:03:41 Tab1 FinishNav50
+0:03:41 Tab1 PageLoad
+0:03:41 Tab1 StartNav51 #renderer-script #auto_subframe
+0:03:41 Tab1 FinishNav51
+0:03:41 Tab1 PageLoad
+0:03:41 Tab1 StartNav52 #renderer-script #auto_subframe
+0:03:41 Tab1 FinishNav52
+0:03:41 Tab1 PageLoad
+0:03:48 Tab1 StartNav53 #google #renderer-user #link
+0:03:48 Tab1 FinishNav53
+0:03:48 Tab1 StartNav54 #google #renderer-script #link
+0:03:48 Tab1 FinishNav54
+0:03:48 Tab1 StartNav55 #google #renderer-script #link
+0:03:48 Tab1 FinishNav55
+0:03:49 Tab1 PageLoad #google
+0:03:50 Tab1 StartNav56 #google #renderer-user #link
+0:03:50 Tab1 StartNav57 #renderer-script #auto_subframe
+0:03:50 Tab1 FinishNav57
+0:03:50 Tab1 PageLoad
+0:03:50 Tab1 StartNav58 #renderer-script #auto_subframe
+0:03:50 Tab1 FinishNav58
+0:03:50 Tab1 PageLoad
+0:03:50 Tab1 StartNav59 #renderer-script #auto_subframe
+0:03:50 Tab1 FinishNav59
+0:03:50 Tab1 PageLoad
+0:03:50 Tab1 FinishNav56
+0:03:50 Tab1 StartNav60 #google #renderer-script #link
+0:03:50 Tab1 FinishNav60
+0:03:50 Tab1 StartNav61 #google #renderer-script #link
+0:03:50 Tab1 FinishNav61
+0:03:51 Tab1 StartNav62 #google #renderer-script #link
+0:03:51 Tab1 FinishNav62
+0:03:51 Tab1 StartNav63 #google #renderer-script #link
+0:03:51 Tab1 FinishNav63
+0:03:51 Tab1 StartNav64 #google #renderer-script #link
+0:03:51 Tab1 FinishNav64
+0:03:51 Tab1 PageLoad #google
+0:03:52 Tab1 StartNav65 #renderer-script #auto_subframe
+0:03:52 Tab1 FinishNav65
+0:03:52 Tab1 PageLoad
+0:03:52 Tab1 StartNav66 #renderer-script #auto_subframe
+0:03:52 Tab1 FinishNav66
+0:03:52 Tab1 PageLoad
+0:03:52 Tab1 StartNav67 #renderer-script #auto_subframe
+0:03:52 Tab1 FinishNav67
+0:03:52 Tab1 PageLoad
+0:03:53 Tab1 StartNav68 #google #renderer-script #link
+0:03:53 Tab1 FinishNav68
+0:03:53 Tab1 StartNav69 #google #renderer-script #link
+0:03:53 Tab1 FinishNav69
+0:03:53 Tab1 StartNav70 #google #renderer-script #link
+0:03:53 Tab1 FinishNav70
+0:03:53 Tab1 StartNav71 #google #renderer-script #link
+0:03:53 Tab1 FinishNav71
+0:03:53 Tab1 StartNav72 #google #renderer-script #link
+0:03:53 Tab1 FinishNav72
+0:03:53 Tab1 StartNav73 #google #renderer-script #link
+0:03:53 Tab1 FinishNav73
+0:03:53 Tab1 StartNav74 #google #renderer-script #link
+0:03:53 Tab1 FinishNav74
+0:03:53 Tab1 StartNav75 #renderer-script #auto_subframe
+0:03:53 Tab1 FinishNav75
+0:03:53 Tab1 PageLoad
+0:04:18 Tab1 StartNav76 #renderer-script #auto_subframe
+0:04:18 Tab1 FinishNav76
+0:04:18 Tab1 PageLoad
+0:04:18 Tab1 StartNav77 #renderer-script #auto_subframe
+0:04:18 Tab1 FinishNav77
+0:04:19 Tab1 PageLoad
+0:04:30 Tab1 StartNav78 #google #renderer-user #link
+0:04:31 Tab1 FinishNav78
+0:04:31 Tab1 StartNav79 #google #renderer-script #link
+0:04:31 Tab1 FinishNav79
+0:04:31 Tab1 PageLoad #google
+0:07:10 Widget Closed: TooltipAura
+0:12:00 Tab1 StartNav80 #google #renderer-user #form_submit
+0:12:00 Tab1 FinishNav80
+0:12:00 Tab1 StartNav81 #google #renderer-script #link
+0:12:00 Tab1 FinishNav81
+0:12:01 Tab1 StartNav82 #google #renderer-script #link
+0:12:01 Tab1 FinishNav82
+0:12:01 Tab1 PageLoad #google
+0:12:01 Tab1 StartNav83 #renderer-script #auto_subframe
+0:12:01 Tab1 FinishNav83
+0:12:01 Tab1 PageLoad
+0:12:02 Tab1 StartNav84 #renderer-script #auto_subframe
+0:12:02 Tab1 FinishNav84
+0:12:02 Tab1 PageLoad
+0:12:02 Tab1 StartNav85 #renderer-script #auto_subframe
+0:12:02 Tab1 FinishNav85
+0:12:02 Tab1 PageLoad
+0:00:00 Startup
+0:00:00 Microsoft.DeleteProfileHelper.CleanUpEphemeralProfiles
+0:00:00 Microsoft.DeleteProfileHelper.CleanUpDeletedProfiles
+0:00:00 Microsoft.NewBrowser_Popup
+0:00:00 Microsoft.BrowserList.AddBrowser
+0:00:00 Browser1 Insert active Tab1 at 0
+0:00:00 Tab1 StartNav1 #auto_toplevel
+0:00:00 Tab1 StartNav2 #google #typed
+0:00:00 Tab1 FinishNav1
+0:00:00 Tab1 PageLoad
+0:00:00 Tab1 FinishNav2
+0:00:00 Tab1 StartNav3 #google #renderer-script #link
+0:00:00 Tab1 FinishNav3
+0:00:00 Tab1 PageLoad #google
+0:00:01 Tab1 StartNav4 #google #renderer-script #link
+0:00:01 Tab1 FinishNav4
+0:00:02 Widget Closed: TooltipAura
+0:00:04 Memory Pressure: Moderate
+0:00:05 Tab1 StartNav5 #google #renderer-user #form_submit
+0:00:05 Tab1 FinishNav5
+0:00:05 Tab1 StartNav6 #google #renderer-script #link
+0:00:05 Tab1 FinishNav6
+0:00:06 Tab1 StartNav7 #google #renderer-script #link
+0:00:06 Tab1 FinishNav7
+0:00:07 Tab1 StartNav8 #renderer-script #auto_subframe
+0:00:07 Tab1 StartNav9 #renderer-script #auto_subframe
+0:00:07 Tab1 FinishNav8
+0:00:07 Tab1 FinishNav9
+0:00:07 Tab1 PageLoad
+0:00:07 Tab1 PageLoad
+0:00:07 Tab1 PageLoad #google
+0:00:08 Tab1 StartNav10 #renderer-script #auto_subframe
+0:00:08 Tab1 FinishNav10
+0:00:08 Tab1 PageLoad
+0:00:08 Tab1 StartNav11 #renderer-user #auto_subframe
+0:00:08 Tab1 StartNav12 #renderer-user #auto_subframe
+0:00:08 Tab1 FinishNav11
+0:00:08 Tab1 PageLoad
+0:00:08 Tab1 StartNav13 #renderer-script #auto_subframe
+0:00:08 Tab1 FinishNav13
+0:00:08 Tab1 PageLoad
+0:00:08 Tab1 StartNav14 #google #renderer-user #link
+0:00:08 Tab1 FinishNav14
+0:00:08 Tab1 FinishNav12
+0:00:09 Tab1 PageLoad
+0:00:10 Tab1 StartNav15 #renderer-script #auto_subframe
+0:00:10 Tab1 FinishNav15
+0:00:10 Tab1 PageLoad
+0:00:11 Microsoft.Clipboard.WriteText
+0:00:15 Memory Pressure: Moderate
+0:00:25 Memory Pressure: Moderate
+0:00:35 Memory Pressure: Moderate
+0:00:45 Memory Pressure: Moderate
+0:00:55 Memory Pressure: Moderate
+0:01:02 Microsoft.UnloadController.IsUnclosableApp_IsNotWebApp

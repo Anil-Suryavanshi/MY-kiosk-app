@@ -1,0 +1,66 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Users\\kr857\\Desktop\\SecureExamBrowser\\native\\SecureExamBrowserNative.vcxproj": {}
+  },
+  "projects": {
+    "C:\\Users\\kr857\\Desktop\\SecureExamBrowser\\native\\SecureExamBrowserNative.vcxproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\kr857\\Desktop\\SecureExamBrowser\\native\\SecureExamBrowserNative.vcxproj",
+        "projectName": "SecureExamBrowserNative",
+        "projectPath": "C:\\Users\\kr857\\Desktop\\SecureExamBrowser\\native\\SecureExamBrowserNative.vcxproj",
+        "packagesPath": "C:\\Users\\kr857\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\kr857\\Desktop\\SecureExamBrowser\\native\\obj\\",
+        "projectStyle": "PackageReference",
+        "skipContentFileWrite": true,
+        "UsingMicrosoftNETSdk": false,
+        "configFilePaths": [
+          "C:\\Users\\kr857\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "native"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "native": {
+            "framework": "native",
+            "projectReferences": {}
+          }
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "native": {
+          "framework": "native",
+          "dependencies": {
+            "Microsoft.Web.WebView2": {
+              "target": "Package",
+              "version": "[1.0.3065.39, )"
+            }
+          }
+        }
+      },
+      "runtimes": {
+        "win": {
+          "#import": []
+        },
+        "win-arm64": {
+          "#import": []
+        },
+        "win-x64": {
+          "#import": []
+        },
+        "win-x86": {
+          "#import": []
+        }
+      }
+    }
+  }
+}

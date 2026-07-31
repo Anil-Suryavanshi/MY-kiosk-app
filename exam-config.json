@@ -1,0 +1,5 @@
+{
+  "StartUrl": "https://your-exam-portal.example/start",
+  "AllowedHosts": ["your-exam-portal.example"],
+  "ExitPasswordHash": "REPLACE_WITH_SHA256_UPPERCASE_HEX"
+}

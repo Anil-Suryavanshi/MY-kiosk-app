@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "5C6ROG/2mK8=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\kr857\\Desktop\\SecureExamBrowser\\native\\SecureExamBrowserNative.vcxproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\kr857\\.nuget\\packages\\microsoft.web.webview2\\1.0.3065.39\\microsoft.web.webview2.1.0.3065.39.nupkg.sha512"
+  ],
+  "logs": []
+}

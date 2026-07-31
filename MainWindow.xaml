@@ -1,0 +1,24 @@
+<Window x:Class="SecureExamBrowser.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
+        Title="Secure Exam Browser"
+        WindowStyle="None"
+        ResizeMode="NoResize"
+        ShowInTaskbar="False"
+        Topmost="True"
+        WindowState="Maximized"
+        PreviewKeyDown="Window_PreviewKeyDown"
+        PreviewKeyUp="Window_PreviewKeyUp"
+        Deactivated="Window_Deactivated"
+        Closing="Window_Closing">
+    <Grid Background="#101828">
+        <wv2:WebView2 x:Name="Browser" />
+        <Border x:Name="LoadingOverlay" Background="#101828" Panel.ZIndex="2">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock Text="Secure Exam Browser" Foreground="White" FontSize="28" HorizontalAlignment="Center" />
+                <TextBlock x:Name="StatusText" Text="Preparing secure session…" Foreground="#B9C7DD" Margin="0,12,0,0" HorizontalAlignment="Center" />
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

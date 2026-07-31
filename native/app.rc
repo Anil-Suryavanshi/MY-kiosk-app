@@ -1,0 +1,13 @@
+#include "resource.h"
+#include <windows.h>
+
+IDD_UNLOCK DIALOGEX 0, 0, 230, 100
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Invigilator unlock"
+FONT 9, "Segoe UI"
+BEGIN
+    LTEXT "Enter invigilator password to resume the exam:", -1, 12, 14, 205, 12
+    EDITTEXT IDC_PASSWORD, 12, 34, 205, 14, ES_PASSWORD | ES_AUTOHSCROLL
+    DEFPUSHBUTTON "Resume", IDC_UNLOCK_BUTTON, 94, 66, 57, 17
+    PUSHBUTTON "Cancel", IDCANCEL, 160, 66, 57, 17
+END
