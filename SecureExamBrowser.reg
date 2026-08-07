@@ -1,0 +1,6 @@
+Windows Registry Editor Version 5.00
+
+[HKEY_CURRENT_USER\Software\SecureExamBrowser]
+"ApplicationName"="Secure Exam Browser"
+"Version"="1.0"
+"InstallScope"="Current User"

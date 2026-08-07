@@ -1,0 +1,12 @@
+Secure Exam Browser - Installation Complete
+
+Secure Exam Browser has been installed successfully.
+
+Before starting an exam:
+1. Ensure that the computer has an active internet connection.
+2. Ensure that Microsoft Edge WebView2 Runtime is installed.
+3. Do not close the browser or use restricted keyboard shortcuts during an exam.
+
+If the browser cannot start or the exam page does not load, contact your exam
+administrator or invigilator.
+

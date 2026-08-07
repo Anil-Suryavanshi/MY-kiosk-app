@@ -1,0 +1,15 @@
+Secure Exam Browser - Installation Information
+
+Please read before continuing.
+
+This application is intended for authorized exam use only.
+
+Requirements:
+- Windows 10 or Windows 11
+- Microsoft Edge WebView2 Runtime installed
+- An active internet connection when the exam is launched
+
+By continuing, you confirm that you are authorized to install and use this
+application. Do not modify, copy, distribute, or reverse engineer the
+application without permission from the copyright owner.
+
