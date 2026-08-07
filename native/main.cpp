@@ -56,6 +56,8 @@ public:
                                 controller->get_CoreWebView2(&webview);
                                 ConfigureWebView();
                                 ResizeBrowser();
+                                SetWindowPos(loadingOverlay, HWND_TOP, 0, 0, 0, 0,
+                                    SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
                                 const auto targetUrl = FetchExamUrl();
                                 if (targetUrl.empty()) {
                                     MessageBox(window, L"Could not retrieve the exam URL. Check the network and configuration.", L"Secure Exam Browser", MB_ICONERROR);
@@ -67,7 +69,6 @@ public:
                                     return E_FAIL;
                                 }
                                 webview->Navigate(targetUrl.c_str());
-                                ShowWindow(loadingOverlay, SW_HIDE);
                                 return S_OK;
                             }).Get());
                 }).Get());
@@ -238,6 +239,7 @@ private:
         EventRegistrationToken ignored{};
         webview->add_NewWindowRequested(Callback<ICoreWebView2NewWindowRequestedEventHandler>([](ICoreWebView2*, ICoreWebView2NewWindowRequestedEventArgs* args) { args->put_Handled(TRUE); return S_OK; }).Get(), &ignored);
         webview->add_NavigationStarting(Callback<ICoreWebView2NavigationStartingEventHandler>([this](ICoreWebView2*, ICoreWebView2NavigationStartingEventArgs* args) { LPWSTR uri{}; args->get_Uri(&uri); const bool allowed = IsAllowed(uri); CoTaskMemFree(uri); if (!allowed) { args->put_Cancel(TRUE); ReportViolation(L"An unapproved website was requested."); } return S_OK; }).Get(), &ignored);
+        webview->add_NavigationCompleted(Callback<ICoreWebView2NavigationCompletedEventHandler>([this](ICoreWebView2*, ICoreWebView2NavigationCompletedEventArgs*) { ShowWindow(loadingOverlay, SW_HIDE); return S_OK; }).Get(), &ignored);
     }
     void WriteLog(const wchar_t* event) {
         wchar_t location[MAX_PATH]{}; GetModuleFileName(nullptr, location, MAX_PATH); std::wstring path(location); path = path.substr(0, path.find_last_of(L"\\/")) + L"\\exam-security.log";
@@ -263,7 +265,7 @@ LRESULT CALLBACK KeyboardHook(int code, WPARAM keyMessage, LPARAM data) {
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
     switch (message) {
     case WM_CREATE:
-        gApp->loadingOverlay = CreateWindowEx(WS_EX_TOPMOST, L"STATIC", L"Secure Exam Browser\n\nLoading secure exam session...", WS_CHILD | WS_VISIBLE | SS_CENTER | SS_CENTERIMAGE, 0, 0, 0, 0, hwnd, nullptr, GetModuleHandle(nullptr), nullptr);
+        gApp->loadingOverlay = CreateWindowEx(WS_EX_TOPMOST, L"STATIC", L"Secure Exam Browser\n\nLoading your exam...\nPlease wait.", WS_CHILD | WS_VISIBLE | SS_CENTER | SS_CENTERIMAGE, 0, 0, 0, 0, hwnd, nullptr, GetModuleHandle(nullptr), nullptr);
         gApp->freezeOverlay = CreateWindowEx(WS_EX_TOPMOST, L"STATIC", L"EXAM PAUSED\n\n3 security warnings detected.\nCall the invigilator.\n\nInvigilator: press Ctrl+Shift+F10 to unlock.", WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 0, 0, 0, 0, hwnd, nullptr, GetModuleHandle(nullptr), nullptr);
         SendMessage(gApp->loadingOverlay, WM_SETFONT, reinterpret_cast<WPARAM>(GetStockObject(DEFAULT_GUI_FONT)), TRUE);
         SendMessage(gApp->freezeOverlay, WM_SETFONT, reinterpret_cast<WPARAM>(GetStockObject(DEFAULT_GUI_FONT)), TRUE);

@@ -8,17 +8,100 @@
         ShowInTaskbar="False"
         Topmost="True"
         WindowState="Maximized"
+        Background="Transparent"
+        AllowsTransparency="True"
         PreviewKeyDown="Window_PreviewKeyDown"
         PreviewKeyUp="Window_PreviewKeyUp"
         Deactivated="Window_Deactivated"
         Closing="Window_Closing">
-    <Grid Background="#101828">
-        <wv2:WebView2 x:Name="Browser" />
-        <Border x:Name="LoadingOverlay" Background="#101828" Panel.ZIndex="2">
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                <TextBlock Text="Secure Exam Browser" Foreground="White" FontSize="28" HorizontalAlignment="Center" />
-                <TextBlock x:Name="StatusText" Text="Preparing secure session…" Foreground="#B9C7DD" Margin="0,12,0,0" HorizontalAlignment="Center" />
-            </StackPanel>
+    <Window.Resources>
+        <LinearGradientBrush x:Key="PanelGradient" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#07111F" Offset="0" />
+            <GradientStop Color="#111C32" Offset="1" />
+        </LinearGradientBrush>
+    </Window.Resources>
+
+    <Grid Background="#030712">
+        <Border Margin="12" CornerRadius="26" Background="{StaticResource PanelGradient}" BorderBrush="#26344D" BorderThickness="1" Padding="0">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="32" ShadowDepth="0" Opacity="0.35" Color="#000000" />
+            </Border.Effect>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <Border Grid.Row="0" Background="#0A1427" BorderBrush="#23304B" BorderThickness="0,0,0,1" CornerRadius="26,26,0,0">
+                    <Grid Margin="18,14">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Ellipse Width="12" Height="12" Fill="#FF5F57" />
+                            <Ellipse Width="12" Height="12" Fill="#FEBC2E" Margin="8,0,0,0" />
+                            <Ellipse Width="12" Height="12" Fill="#28C840" Margin="8,0,0,0" />
+                        </StackPanel>
+
+                        <Border Grid.Column="1" Margin="16,0,0,0" CornerRadius="16" Background="#121C31" BorderBrush="#273653" BorderThickness="1" Height="36">
+                            <Grid Margin="12,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="🔒" FontSize="14" VerticalAlignment="Center" />
+                                <TextBlock Grid.Column="1" Text="Secure exam session" Margin="8,0,0,0" Foreground="#DDE8FF" VerticalAlignment="Center" FontSize="13" Opacity="0.92" />
+                            </Grid>
+                        </Border>
+
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="Protected" Foreground="#7AE38B" FontSize="12" FontWeight="SemiBold" Margin="0,0,16,0" />
+                            <Border CornerRadius="10" Background="#12203A" Padding="8,4">
+                                <TextBlock Text="Brave-style security" Foreground="#8DA0BC" FontSize="12" />
+                            </Border>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <Grid Grid.Row="1" Background="#0B1324">
+                    <Border Margin="10" CornerRadius="20" Background="#050A14" ClipToBounds="True">
+                        <Grid>
+                            <wv2:WebView2 x:Name="Browser" />
+                            <Border x:Name="LoadingOverlay" Panel.ZIndex="2" Background="#050A14" Opacity="0.98">
+                                <Grid>
+                                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <Grid HorizontalAlignment="Center">
+                                            <Ellipse Width="84" Height="84" Stroke="#24354E" StrokeThickness="6" />
+                                            <Ellipse x:Name="SpinnerRing" Width="84" Height="84" Stroke="#6F8DF7" StrokeThickness="6" StrokeDashArray="20 12" RenderTransformOrigin="0.5,0.5">
+                                                <Ellipse.RenderTransform>
+                                                    <RotateTransform Angle="0" />
+                                                </Ellipse.RenderTransform>
+                                                <Ellipse.Triggers>
+                                                    <EventTrigger RoutedEvent="Loaded">
+                                                        <BeginStoryboard>
+                                                            <Storyboard RepeatBehavior="Forever">
+                                                                <DoubleAnimation Storyboard.TargetName="SpinnerRing"
+                                                                             Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)"
+                                                                             From="0" To="360" Duration="0:0:1.2" />
+                                                            </Storyboard>
+                                                        </BeginStoryboard>
+                                                    </EventTrigger>
+                                                </Ellipse.Triggers>
+                                            </Ellipse>
+                                            <Ellipse Width="24" Height="24" Fill="#6F8DF7" />
+                                        </Grid>
+                                        <TextBlock Text="Secure Exam Browser" Foreground="#F1F6FF" FontSize="26" FontWeight="SemiBold" HorizontalAlignment="Center" Margin="0,24,0,8" />
+                                        <TextBlock x:Name="StatusText" Text="Preparing secure session…" Foreground="#9FB0CC" Margin="0,4,0,0" HorizontalAlignment="Center" />
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </Grid>
         </Border>
     </Grid>
 </Window>
