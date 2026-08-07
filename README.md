@@ -17,6 +17,20 @@ $text = 'choose-a-strong-admin-password'
 
 Administrator exit is `Ctrl+Shift+F10`, then the configured password.
 
+## Build the native browser (x64 and x86)
+
+Install **Visual Studio 2022 Build Tools** with the **Desktop development with C++** workload. Then run these commands from the project root in PowerShell:
+
+```powershell
+# 64-bit Windows build
+& 'C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\MSBuild\Current\Bin\amd64\MSBuild.exe' .\native\SecureExamBrowserNative.vcxproj /p:Configuration=Release /p:Platform=x64
+
+# 32-bit Windows build (x86)
+& 'C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\MSBuild\Current\Bin\amd64\MSBuild.exe' .\native\SecureExamBrowserNative.vcxproj /p:Configuration=Release /p:Platform=Win32
+```
+
+The x64 build is created in `native\x64\Release\` and the x86 build is created in `native\Win32\Release\`. Distribute the `.exe`, `WebView2Loader.dll`, and `exam-config.ini` from the matching folder. Both builds also need the Microsoft Edge WebView2 Runtime installed on the target computer.
+
 ## Important security boundary
 
 An ordinary Windows desktop app cannot securely suppress OS-reserved actions such as Ctrl+Alt+Del, Win+L, secure attention screen, or prevent a user from terminating its process. For real supervised exams, deploy this application with a dedicated standard Windows account and Windows **Assigned Access / kiosk mode** or **Shell Launcher**, plus organization device policies (disable Task Manager, command prompt, removable media, etc.). Test the complete policy on a non-production machine before use.

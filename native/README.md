@@ -1,6 +1,18 @@
 # C++ Secure Exam Browser
 
-This is the native C++/Win32 implementation. Open `SecureExamBrowserNative.vcxproj` in Visual Studio 2022, allow NuGet restore, choose **x64**, and build.
+This is the native C++/Win32 implementation. Open `SecureExamBrowserNative.vcxproj` in Visual Studio 2022, allow NuGet restore, choose **x64** for 64-bit Windows or **Win32** for 32-bit Windows, and build.
+
+From the project root, build from PowerShell with:
+
+```powershell
+# x64
+& 'C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\MSBuild\Current\Bin\amd64\MSBuild.exe' .\native\SecureExamBrowserNative.vcxproj /p:Configuration=Release /p:Platform=x64
+
+# x86 (use the Win32 platform name when building)
+& 'C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\MSBuild\Current\Bin\amd64\MSBuild.exe' .\native\SecureExamBrowserNative.vcxproj /p:Configuration=Release /p:Platform=Win32
+```
+
+The files to distribute are generated in `x64\Release\` and `Win32\Release\` respectively. Include `SecureExamBrowserNative.exe`, `WebView2Loader.dll`, and `exam-config.ini` from the same output folder.
 
 Before distribution, edit `exam-config.ini` beside the `.exe`:
 
