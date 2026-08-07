@@ -2,6 +2,8 @@
 
 WPF + WebView2 kiosk browser starter. It launches borderless, maximized, topmost, and does not appear in the Windows taskbar. Browser developer tools, browser accelerators, context menus, zoom, pop-ups, and non-allowlisted navigation are disabled.
 
+For complete setup, configuration, build, installer, deployment, security, and troubleshooting guidance, see [PROJECT_DOCUMENTATION.md](PROJECT_DOCUMENTATION.md).
+
 ## Configure
 
 1. Install the .NET 8 SDK and Microsoft Edge WebView2 Runtime on each client.

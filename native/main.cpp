@@ -291,7 +291,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
 int APIENTRY wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int) {
     CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
     ExamApp app; gApp = &app;
-    WNDCLASS wc{}; wc.hInstance = instance; wc.lpszClassName = L"SecureExamBrowserWindow"; wc.lpfnWndProc = WindowProc; wc.hCursor = LoadCursor(nullptr, IDC_ARROW); wc.hbrBackground = static_cast<HBRUSH>(GetStockObject(BLACK_BRUSH)); RegisterClass(&wc);
+    WNDCLASS wc{}; wc.hInstance = instance; wc.lpszClassName = L"SecureExamBrowserWindow"; wc.lpfnWndProc = WindowProc; wc.hIcon = LoadIcon(instance, MAKEINTRESOURCE(IDI_APP_ICON)); wc.hCursor = LoadCursor(nullptr, IDC_ARROW); wc.hbrBackground = static_cast<HBRUSH>(GetStockObject(BLACK_BRUSH)); RegisterClass(&wc);
     const int width = GetSystemMetrics(SM_CXSCREEN), height = GetSystemMetrics(SM_CYSCREEN);
     HWND window = CreateWindowEx(WS_EX_TOPMOST | WS_EX_TOOLWINDOW, wc.lpszClassName, L"", WS_POPUP | WS_VISIBLE, 0, 0, width, height, nullptr, nullptr, instance, nullptr);
     SetWindowPos(window, HWND_TOPMOST, 0, 0, width, height, SWP_SHOWWINDOW); app.Start(window);

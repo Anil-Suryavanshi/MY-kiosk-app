@@ -1,6 +1,8 @@
 #include "resource.h"
 #include <windows.h>
 
+IDI_APP_ICON ICON "..\\ico (1).ico"
+
 IDD_UNLOCK DIALOGEX 0, 0, 230, 100
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Invigilator unlock"
