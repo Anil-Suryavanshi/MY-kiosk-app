@@ -249,6 +249,7 @@ private:
 
 ExamApp* gApp{};
 HHOOK gKeyboardHook{};
+HFONT gOverlayFont{};
 
 LRESULT CALLBACK KeyboardHook(int code, WPARAM keyMessage, LPARAM data) {
     if (code != HC_ACTION || !gApp || gApp->unlockDialogOpen) return CallNextHookEx(gKeyboardHook, code, keyMessage, data);
@@ -267,8 +268,10 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
     case WM_CREATE:
         gApp->loadingOverlay = CreateWindowEx(WS_EX_TOPMOST, L"STATIC", L"Secure Exam Browser\n\nLoading your exam...\nPlease wait.", WS_CHILD | WS_VISIBLE | SS_CENTER | SS_CENTERIMAGE, 0, 0, 0, 0, hwnd, nullptr, GetModuleHandle(nullptr), nullptr);
         gApp->freezeOverlay = CreateWindowEx(WS_EX_TOPMOST, L"STATIC", L"EXAM PAUSED\n\n3 security warnings detected.\nCall the invigilator.\n\nInvigilator: press Ctrl+Shift+F10 to unlock.", WS_CHILD | SS_CENTER | SS_CENTERIMAGE, 0, 0, 0, 0, hwnd, nullptr, GetModuleHandle(nullptr), nullptr);
-        SendMessage(gApp->loadingOverlay, WM_SETFONT, reinterpret_cast<WPARAM>(GetStockObject(DEFAULT_GUI_FONT)), TRUE);
-        SendMessage(gApp->freezeOverlay, WM_SETFONT, reinterpret_cast<WPARAM>(GetStockObject(DEFAULT_GUI_FONT)), TRUE);
+        gOverlayFont = CreateFontW(-18, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET,
+            OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH, L"Segoe UI");
+        SendMessage(gApp->loadingOverlay, WM_SETFONT, reinterpret_cast<WPARAM>(gOverlayFont), TRUE);
+        SendMessage(gApp->freezeOverlay, WM_SETFONT, reinterpret_cast<WPARAM>(gOverlayFont), TRUE);
         return 0;
     case WM_SIZE: gApp->ResizeBrowser(); return 0;
     case WM_ACTIVATE: if (LOWORD(wParam) == WA_INACTIVE && !gApp->frozen && !gApp->unlockDialogOpen && !gApp->warningDialogOpen) PostMessage(hwnd, WM_VIOLATION, 0, 0); return 0;
@@ -283,7 +286,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
         }
         break;
     case WM_CLOSE: return 0;
-    case WM_DESTROY: PostQuitMessage(0); return 0;
+    case WM_DESTROY: if (gOverlayFont) DeleteObject(gOverlayFont); PostQuitMessage(0); return 0;
     }
     return DefWindowProc(hwnd, message, wParam, lParam);
 }
