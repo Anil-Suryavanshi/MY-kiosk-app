@@ -4,7 +4,7 @@ WPF + WebView2 kiosk browser starter. It launches borderless, maximized, topmost
 
 For complete setup, configuration, build, installer, deployment, security, and troubleshooting guidance, see [PROJECT_DOCUMENTATION.md](PROJECT_DOCUMENTATION.md).
 
-## Configure
+## Configure 
 
 1. Install the .NET 8 SDK and Microsoft Edge WebView2 Runtime on each client.
 2. Edit `exam-config.json`: set the start URL, permitted portal hosts, and an administrator exit-password SHA-256 hash (uppercase hex).
